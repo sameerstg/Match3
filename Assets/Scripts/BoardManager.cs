@@ -35,7 +35,7 @@ public class BoardManager : MonoBehaviour
         Vector3 perTileSize;
         if (largestXLength < largestYLength)
         {
-            perTileSize = Vector3.one * screenSize.y / (largestYLength + 2);
+            perTileSize = Vector3.one * screenSize.y / (largestYLength + 2); 
 
         }
         else
@@ -48,8 +48,13 @@ public class BoardManager : MonoBehaviour
         {
             for (int x = 0; x < grid.y[y].x.Length; x++)
             {
-                grid.y[y].x[x].go = Instantiate(backgrountTile,Vector3.zero+Vector3.left*x*largestXLength/2+Vector3.up*y*largestYLength/2,Quaternion.identity,transform);
+                grid.y[y].x[x].go = Instantiate(backgrountTile,
+                    (Vector3.left*(largestXLength)/2)+(Vector3.right*(x-1)*perTileSize.x)
+                    + (Vector3.down * (largestYLength) / 2) + (Vector3.up* (y-1) * perTileSize.y)
+                    , Quaternion.identity,transform);
                 grid.y[y].x[x].go.transform.localScale = perTileSize;
+                var rand = Random.Range(0, matchVariety.Count);
+                grid.y[y].x[x].Tile = new Tile(rand, Instantiate(matchVariety[rand],transform.GetChild(0)));
             }
         }
     }
@@ -77,7 +82,6 @@ public class TileContainer{
 
     public Vector2 gridPosition;
     public GameObject go;
-    public Vector3 position;
     [SerializeField] Tile tile;
 
     public Tile Tile { get => tile; set { tile = value; SetChildTile(); } }
@@ -86,7 +90,9 @@ public class TileContainer{
     {
         if (Tile != null&&Tile.equiped)
         {
-            Tile.go.transform.position = position + Vector3.back * 2;
+            
+            Tile.go.transform.position = go.transform.position + Vector3.back * 2;
+            Tile.go.transform.localScale = go.transform.localScale*0.9f;
         }   
     }
 
